@@ -1,0 +1,28 @@
+{
+  "name": "front-crop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "start": "webpack serve --open 1000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anderlaw/front-crop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anderlaw/front-crop/issues"
+  },
+  "homepage": "https://github.com/anderlaw/front-crop#readme",
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.5.0",
+    "webpack": "^5.3.2",
+    "webpack-cli": "^4.1.0",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
