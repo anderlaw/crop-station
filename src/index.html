@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="./main.min.css" />
+    <style></style>
+  </head>
+  <body>
+    <input type="file" />
+    <div id="front-crop" class="open">
+      <div class="top-bar">
+        <span class="x-axis-key">x:</span>
+        <span class="axis-value">375</span>
+        <span class="y-axis-key">y:</span>
+        <span class="axis-value">375</span>
+        <span class="btn-ok">√</span>
+      </div>
+      <div class="img-frame">
+        <img src="./images/美女.jpg" alt="" />
+        <div class="crop-frame" draggable="true">
+          <div class="shadow"></div>
+          <div draggable="true" class="solid-boundry right"></div>
+          <div draggable="true" class="solid-boundry left"></div>
+          <div draggable="true" class="solid-boundry top"></div>
+          <div draggable="true" class="solid-boundry bottom"></div>
+          <div draggable="true" class="double-boundry en"></div>
+          <div draggable="true" class="double-boundry es"></div>
+          <div draggable="true" class="double-boundry wn"></div>
+          <div draggable="true" class="double-boundry ws"></div>
+          <div class="crop-dashed dashed-v"></div>
+          <div class="crop-dashed dashed-h"></div>
+          <div class="center-boundry top"></div>
+          <div class="center-boundry left"></div>
+          <div class="center-boundry bottom"></div>
+          <div class="center-boundry right"></div>
+        </div>
+      </div>
+
+      <div class="bottom-bar">
+        <span>+放大</span>
+        <span>-缩小</span>
+      </div>
+    </div>
+    <script src="./index.js"></script>
+    <script>
+      /**功能描述
+       * 1.添加图片，并剪切，可以调整剪切框大小
+       */
+      const container = document.querySelector("#front-crop");
+      const imgFrame = document.querySelector("#front-crop .img-frame");
+      const baseImg = document.createElement("img");
+      imgFrame.appendChild(baseImg);
+      const fileReader = new FileReader();
+      document.querySelector("input").addEventListener("change", (e) => {
+        container.style.display = "block";
+        const file = e.target.files[0];
+
+        fileReader.readAsDataURL(file);
+        fileReader.onloadend = function (e) {
+          const dataUrl = e.target.result;
+          baseImg.setAttribute("src", dataUrl);
+        };
+      });
+      //给剪切框添加拖拽
+      initDragEvent()
+      //四条边添加剪切事件
+      initCropEvent()
+      // copyDownimgEle(document.querySelector('img'))
+      //给图片添加拖拽
+      //   document
+      //     .querySelector("#front-crop .img-frame")
+      //     .addEventListener("drag", (e) => {
+      //       console.log(e, "drag");
+      //     });
+      //   document
+      //     .querySelector("#front-crop .img-frame")
+      //     .addEventListener("dragend", (e) => {
+      //       console.log(e, "dragend");
+      //     });
+    </script>
+  </body>
+</html>

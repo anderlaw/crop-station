@@ -1,0 +1,159 @@
+$baseBgColor: #333;
+$barBgColor: #666;
+$barColor: #fff;
+$cropBorderColor: #39f;
+$cropDashedColor: #eee;
+#front-crop {
+  //弹出窗口
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  color: $barColor;
+  background-color: $baseBgColor;
+  display: none; //默认关闭
+  &.open {
+    display: block;
+  }
+  .top-bar {
+    background-color: $barBgColor;
+    line-height: 48px;
+    padding: 0 16px;
+  }
+  .bottom-bar {
+    line-height: 48px;
+    padding: 0 16px;
+    text-align: center;
+  }
+  .img-frame {
+    height: calc(100% - 96px);
+    overflow: hidden;
+    position: relative;
+    img {
+      position: absolute;
+      max-width: calc(100%);
+    }
+  }
+  .crop-frame {
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    border: 1px solid $cropBorderColor;
+    z-index: 10;
+    cursor: move;
+    .shadow{
+      background-color: #fff;
+      position: absolute;
+      opacity: .1;
+      width: 100%;
+      height: 100%;
+    }
+    .dashed-v {
+      position: absolute;
+      width: 33.3333%;
+      height: 100%;
+      left: 33.3333%;
+      border-left: 1px dashed $cropDashedColor;
+      border-right: 1px dashed $cropDashedColor;
+    }
+    .dashed-h {
+      position: absolute;
+      width: 100%;
+      height: 33.3333%;
+      top: 33.3333%;
+      border-top: 1px dashed $cropDashedColor;
+      border-bottom: 1px dashed $cropDashedColor;
+    }
+    //单界线
+    .solid-boundry{
+      background-color: $cropBorderColor;
+      position: absolute;
+      opacity: .1;
+      z-index:2;
+
+      &.right{
+        height: 100%;
+        width: 5px;
+        right: -3px;
+        cursor: e-resize;
+      }
+      &.left{
+        height: 100%;
+        width: 5px;
+        left: -3px;
+        cursor: w-resize;
+      }
+      &.top{
+        width: 100%;
+        height: 5px;
+        top: -3px;
+        cursor: n-resize;
+      }
+      &.bottom{
+        width: 100%;
+        height: 5px;
+        bottom: -3px;
+        cursor: s-resize;
+      }
+    }
+    .center-boundry{
+      width: 5px;
+      height: 5px;
+      position: absolute;
+      background-color: $cropBorderColor;
+      z-index: 1;
+      &.top{
+        cursor: n-resize;
+        top: -3px;
+        left: 50%;
+      }
+      &.left{
+        left: -3px;
+        top: 50%;
+        cursor: w-resize;
+      }
+      &.bottom{
+        bottom: -3px;
+        left: 50%;
+        cursor: s-resize;
+      }
+      &.right{
+        right: -3px;
+        top: 50%;
+        cursor: e-resize;
+      }
+    }
+    .double-boundry{
+      z-index: 3;
+      width: 7px;
+      height: 7px;
+      background-color:$cropBorderColor;
+      position: absolute;
+      &.en{
+        right: -4px;
+        top: -4px;
+        cursor:ne-resize
+      }
+      &.es{
+        right: -4px;
+        bottom: -4px;
+        cursor: se-resize;
+      }
+      &.wn{
+        top: -4px;
+        left: -4px;
+        cursor: nw-resize;
+      }
+      &.ws{
+        bottom: -4px;
+        left: -4px;
+        cursor: sw-resize;
+      }
+    }
+  }
+}
+.btn-ok {
+  font-size: 18px;
+  float: right;
+}
