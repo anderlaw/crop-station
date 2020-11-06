@@ -20,11 +20,50 @@ $cropDashedColor: #eee;
     background-color: $barBgColor;
     line-height: 48px;
     padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    button{
+      background-color: transparent;
+      border-width: 0;
+      cursor: pointer;
+      height: 20px;
+      width: 20px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: auto 100%;
+      vertical-align: middle;
+      outline: none;
+      background-image: url(./images/hook.png);
+    }
+    .btn-ok{
+      font-size: 18px;
+    }
   }
   .bottom-bar {
+    background-color: #1919197e;
     line-height: 48px;
     padding: 0 16px;
     text-align: center;
+    button{
+      background-color: transparent;
+      border-width: 0;
+      cursor: pointer;
+      height: 20px;
+      width: 20px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: auto 100%;
+      vertical-align: middle;
+      outline: none;
+    }
+    .zoom-in{
+      background-image: url(./images/fangda.png);
+      
+    }
+    .zoom-out{
+      background-image: url(./images/suoxiao.png);
+    }
   }
   .img-frame {
     height: calc(100% - 96px);
@@ -151,8 +190,4 @@ $cropDashedColor: #eee;
       }
     }
   }
-}
-.btn-ok {
-  font-size: 18px;
-  float: right;
 }
