@@ -1,4 +1,5 @@
 const CropTool = (function () {
+  let outerContainer = null;
   let imgSourceEle = null; //传入img标签
   let imgSourceWidth;
   let imgSourceHeight;
@@ -10,24 +11,38 @@ const CropTool = (function () {
   let cropFrameEle = null;
   let xAxisValueEle = null;
   let yAxisValueEle = null;
+  let pictureWidthEle = null
+  let pictureHeightEle = null
   let zoomLevel = 1;
-  function mountDOMStructure(selector) {
+  function _open(){
+    outerContainer.classList.add('open');//打开遮罩
+  }
+  function _close(){
+    outerContainer.classList.remove('open');//打开遮罩
+  }
+  function mountDOMStructure(selector,imgEle) {
     OuterContainerSelector = selector;
+    outerContainer = document.querySelector(selector);
+    
+    _open();
     document.querySelector(selector).innerHTML = `
         <div class="top-bar">
-        <span>图形尺寸</span>
-        <span>
-          200 X 100
-        </span>
-        <span>剪切尺寸：</span>
-        <span class="x-axis-key">x:</span>
-        <span class="x-axis-value">375</span>
-        <span class="y-axis-key">y:</span>
-        <span class="y-axis-value">375</span>
-        <button class="btn-ok">剪切</button>
-      </div>
+          <div class="meta-info">
+            <span>material picture:</span>
+            <span class="origin-picture-width">0</span>
+            <span> * </span>
+            <span class="origin-picture-height">0</span>
+            <span>crop-board:</span>
+            <span class="x-axis-value">0</span>
+            <span> * </span>
+            <span class="y-axis-value">0</span>
+          </div>
+          
+          <div class="right-btns">
+            <button class="btn-ok"></button>
+          </div>
+        </div>
       <div class="img-frame">
-        <img src="./images/美女.jpg" alt="" />
         <div class="crop-frame" draggable="true">
           <div class="shadow"></div>
           <div draggable="true" class="solid-boundry right"></div>
@@ -49,20 +64,25 @@ const CropTool = (function () {
 
       <div class="bottom-bar">
         <span>调整图形大小</span>
-        <button class="big">+放大</button>
-        <button class="small">-缩小</button>
+        <button class="zoom-in"></button>
+        <button class="zoom-out"></button>
       </div>
         `;
     //查找并保存容器的引用
     //图片
-    imgSourceEle = document.querySelector(
-      OuterContainerSelector + " .img-frame img"
-    );
+    imgSourceEle = imgEle;
+    document.querySelector(
+      OuterContainerSelector + " .img-frame"
+    ).appendChild(imgSourceEle);
+
     imgSourceEle.onload = function () {
       imgSourceWidth = imgSourceEle.width;
       imgSourceHeight = imgSourceEle.height;
+      showMaterialPicSize();
     };
-
+    //显示图片素材尺寸的元素
+    pictureWidthEle = document.querySelector('.origin-picture-width')
+    pictureHeightEle = document.querySelector('.origin-picture-height')
     //x,y轴插值的元素引用
     xAxisValueEle = document.querySelector(
       OuterContainerSelector + " .x-axis-value"
@@ -74,11 +94,18 @@ const CropTool = (function () {
     cropFrameEle = document.querySelector(
       OuterContainerSelector + " .crop-frame"
     );
+    //计算一次剪切到的图片大小
+    calculateCropImgSize()
+    showCropImgSize()
   }
   function resizeImg() {
     console.log(zoomLevel, imgSourceWidth, imgSourceHeight);
     imgSourceEle.width = imgSourceWidth * zoomLevel;
     imgSourceEle.height = imgSourceHeight * zoomLevel;
+  }
+  function showMaterialPicSize(){
+    pictureWidthEle.innerText = imgSourceWidth
+    pictureHeightEle.innerText = imgSourceHeight
   }
   function showCropImgSize() {
     xAxisValueEle.innerText = cropImgWidthTxt;
@@ -231,7 +258,7 @@ const CropTool = (function () {
     }
     function initBtnClickEvents() {
       document
-        .querySelector(OuterContainerSelector + " .bottom-bar > .big")
+        .querySelector(OuterContainerSelector + " .bottom-bar > .zoom-in")
         .addEventListener("click", (e) => {
           //点击
           zoomLevel += 0.1;
@@ -240,7 +267,7 @@ const CropTool = (function () {
           showCropImgSize();
         });
       document
-        .querySelector(OuterContainerSelector + " .bottom-bar > .small")
+        .querySelector(OuterContainerSelector + " .bottom-bar > .zoom-out")
         .addEventListener("click", (e) => {
           //点击
           zoomLevel = zoomLevel - 0.1 <= 0 ? 0.1 : zoomLevel - 0.1;
@@ -251,11 +278,11 @@ const CropTool = (function () {
       document
         .querySelector(OuterContainerSelector + " .btn-ok")
         .addEventListener("click", (e) => {
-          //剪切并下载图片
-          cropAndDownload();
+          //处理图片
+          dealAfterCrop();
         });
     }
-    function cropAndDownload() {
+    function dealAfterCrop() {
       //计算剪切起点
       const imgComputedStyle = getComputedStyle(imgSourceEle)
       const cropFrameComputedStyle = getComputedStyle(cropFrameEle)
@@ -280,21 +307,62 @@ const CropTool = (function () {
       console.log(`crop position:${cropStartX} * ${cropStartY}`)
       console.log(`img-size:${cropImgWidth} * ${cropImgHeight}`)
       const bs64 = canvas.toDataURL("image/jpeg");
-
-      const aEle = document.createElement("a");
-      aEle.href = bs64;
-      aEle.download = "image.jpg";
-      aEle.click();
+      canvas.toBlob(blob=>{
+        const file = new File([blob],'img.png')
+        CropTool.croped && CropTool.croped({
+          file,
+          bs64
+        })
+      })
+      // const aEle = document.createElement("a");
+      // aEle.href = bs64;
+      // aEle.download = "image.jpg";
+      // aEle.click();
     }
     initFourSolidLineEvents();
     initFourCornerEvents();
     initCropFrameDragEvent();
     initBtnClickEvents();
   }
+  function _getBase64EleFromFile(file,callback){
+    const fileReader = new FileReader()
+    fileReader.readAsDataURL(file)
+    fileReader.onload = function(event){
+      const bs64 = event.target.result
+      const newImg = document.createElement('img')
+      newImg.src = bs64
+      callback(newImg)
+    }
+  }
+  function _copyImgEle(imgEle){
+    const newImg = document.createElement('img');
+    newImg.src = imgEle.src;
+    return newImg
+  }
+  function getCropResults(){
+
+  }
   return {
-    init(selecor) {
-      mountDOMStructure(selecor);
-      initEvents();
+    init(selecor,imgEleOrFile) {
+
+
+      if(imgEleOrFile instanceof File){
+        //文件
+        //处理为bs64格式的图片
+        _getBase64EleFromFile(imgEleOrFile,newImg=>{
+          mountDOMStructure(selecor,newImg);
+          initEvents();
+        })
+      }else if(imgEleOrFile instanceof Image){
+        //图片元素,拷贝一份
+        mountDOMStructure(selecor,_copyImgEle(imgEleOrFile));
+        initEvents();
+      }
+      
     },
+    //替换图片
+    close(){
+      _close()
+    }
   };
 })();

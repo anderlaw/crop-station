@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="./main.min.css">
-</head>
-<body>
-    <div class="crop-container open">
-    </div>
+    <link rel="stylesheet" href="./main.min.css" />
+  </head>
+  <body>
+    <input type="file">
+    <!-- <img src="./images/美女.jpg" alt="" /> -->
+    <div class="crop-container"></div>
     <script src="./crop-tool.js"></script>
     <script>
-        CropTool.init('.crop-container')
+      document.querySelector('input').onchange = function(event){
+          const file = event.target.files[0]
+          CropTool.init('.crop-container',file)
+          CropTool.croped = function(res){
+              console.log(res);
+              CropTool.close();
+          }
+      }
     </script>
-</body>
+  </body>
 </html>
