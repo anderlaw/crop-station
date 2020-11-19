@@ -14,9 +14,36 @@
     //底片
     .crop_plateImage {
       position: absolute;
-      cursor: move;
+    
       img {
         display: block;
+        cursor: move;
+      }
+      
+      .resize{
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        right: -5px;
+        bottom:-5px;
+        background-color: #39f;
+        cursor: nwse-resize;
+      }
+      .tooltip_box {
+        font-size: 12px;
+        white-space: nowrap;
+        position: absolute;
+        border-radius: 6px;
+        padding: 4px 6px;
+        left: calc(100% + 10px);
+        bottom: 10px;
+        background-color: #191822;
+        color: #fff;
+        .key {
+          display: inline-block;
+          width: 10px;
+          text-align: right;
+        }
       }
     }
     .crop_cropFrame {

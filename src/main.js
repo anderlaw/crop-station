@@ -1,4 +1,5 @@
 const Workstation = (function () {
+  let _currentImage;
   let _workstation = {
     ref: null, //引用
     width:0,
@@ -20,13 +21,33 @@ const Workstation = (function () {
     left:0,
     top:0
   };
-  function _mountDom(selector) {
-    //添加DOM结构
-    const root = document.querySelector(selector)
-    root.innerHTML = `
-    <div class="crop_workstation">
+  function _cookDom(selector) {
+    //挂载DOM结构
+    const container = document.querySelector(selector);
+    container.innerHTML = `<div class="crop_workstation"></div>`;
+    const workstation = container.querySelector(".crop_workstation");
+    //计算工作台的尺寸
+    workstationWidth = parseFloat(getComputedStyle(workstation).width)
+    workstationHeight = parseFloat(getComputedStyle(workstation).height)
+    workstation.style.display = "none";//隐藏工作台
+    //初始化UI
+    workstation.innerHTML = `
     <div class="crop_desktop">
         <div class="crop_plateImage">
+            <div class="resize"></div>
+            <!-- 悬浮框展示剪切框大小 -->
+            <div class="tooltip_box">
+              <div>
+                <span class="key">W</span>
+                <span>:</span>
+                <span class="value_W">0</span> PX
+              </div>
+              <div>
+                <span class="key">H</span>
+                <span>:</span>
+                <span class="value_H">0</span> PX
+              </div>
+            </div>
         </div>
         <div class="crop_cropFrame">
 
@@ -80,11 +101,16 @@ const Workstation = (function () {
     </div>
 </div>  
     `;
-    _workstation.ref = root.querySelector(".crop_workstation");
+    
+    //保存引用及工作台的尺寸
+    _plateImage.ref = container.querySelector(".crop_plateImage");
+    _cropFrame.ref = container.querySelector(".crop_cropFrame");
+    _workstation.ref = workstation;
+    _workstation.width = workstationWidth;
+    _workstation.height = workstationHeight;
   }
   function _initPlateImage() {
     //如果图片尺寸宽度小于工作桌面的宽度，则居中展示
-
     const computedStylePlate = getComputedStyle(_plateImage.ref);
     const plateImgWidth = parseFloat(computedStylePlate.width);
     const plateImgHeight = parseFloat(computedStylePlate.height);
@@ -142,23 +168,66 @@ const Workstation = (function () {
       document.addEventListener("mouseup", upFn);
     });
   }
+  //修改图片的尺寸
+  function _resizeImage(newSize){
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.width = newSize.width;
+      canvas.height = newSize.height;
+      _plateImage.ref.querySelector('.value_W').innerText = newSize.width.toFixed(2);
+      _plateImage.ref.querySelector('.value_H').innerText = newSize.height.toFixed(2);
+      context.drawImage(
+        _currentImage,
+        0,
+        0,
+        _plateImage.realWidth,
+        _plateImage.realHeight,
+        0,
+        0,
+        newSize.width,
+        newSize.height
+      );
+      const bs64 = canvas.toDataURL("image/png");
+      const newImg = document.createElement('img');
+      newImg.src = bs64;
+      _resourcePool.push(newImg);
+      _plateImage.ref.removeChild(_workstation.ref.querySelector('img'))
+      _plateImage.ref.appendChild(newImg)
+      
+      // const a = document.createElement('a')
+      // a.href = bs64;
+      // a.download = "image.jpg";
+      // a.click()
+  }
   //workstation
   function init(selector) {
     //装载DOM
-    _mountDom(selector);
-
-    //计算工作台的尺寸
-    _workstation.width = parseFloat(getComputedStyle(_workstation.ref).width)
-    _workstation.height = parseFloat(getComputedStyle(_workstation.ref).height)
-    _workstation.ref.style.display = "none";
-
-    _plateImage.ref = _workstation.ref.querySelector(".crop_plateImage");
-    _cropFrame.ref = _workstation.ref.querySelector(".crop_cropFrame");
+    _cookDom(selector);
 
     //设置底片的拖拽
-    _whenDragHappens(_plateImage.ref, function (originPos, offsetDis, event) {
-      _plateImage.ref.style.left = originPos.left + offsetDis.x + "px";
-      _plateImage.ref.style.top = originPos.top + offsetDis.y + "px";
+    _whenDragHappens(_plateImage.ref, function (originPos, offsetDis, target) {
+      if (target.classList.contains("resize")) {
+        //等比例改变图片本身尺寸。只需要改变图片的大小即可
+        const width = originPos.width + offsetDis.x;
+        const xyRatio = _plateImage.realWidth/_plateImage.realHeight;
+        const height = width / xyRatio;
+        _resizeImage({
+          width:width,
+          height:height,
+        })
+      }else if(target.tagName.toLowerCase() === 'img'){
+        //拖拽
+
+        //记录位置信息
+        _plateImage.left = originPos.left + offsetDis.x;
+        _plateImage.top = originPos.top + offsetDis.y
+
+        //设置left.top到对应的位置
+        _plateImage.ref.style.left = _plateImage.left + "px";
+        _plateImage.ref.style.top = _plateImage.top + "px";
+      }
+      
+
     });
     //设置剪切框的拖拽,本身的拖拽和一些边界线的拉伸。
 
@@ -225,7 +294,13 @@ const Workstation = (function () {
   //操作桌面 desktop
 
   //function
-
+  function cpImgtoDom(image){
+    const newImg = document.createElement("img");
+    newImg.src = image.src;
+    newImg.style.display = "none"
+    document.body.appendChild(newImg);
+    _currentImage = newImg
+  }
   //insert image
   function insertImage(imageEleOrFile) {
     //统一以文件的形式存储
@@ -242,6 +317,7 @@ const Workstation = (function () {
         newImg.onload = function () {
           _initPlateImage()
         };
+        cpImgtoDom(newImg)
       };
     } else if (imageEleOrFile instanceof Image) {
       //img
@@ -251,6 +327,8 @@ const Workstation = (function () {
       newImg.onload = function () {
         _initPlateImage()
       };
+      
+      cpImgtoDom(newImg)
     }
     // if(_resourcePool.length >= 5){
     //   _resourcePool.shift()

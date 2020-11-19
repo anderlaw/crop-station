@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./main.min.css">
+    <link rel="stylesheet" href="./src/main.min.css">
 </head>
 <body>
     <input type="file">
     <div id="crop-container">
 
     </div>
-    <script src="./main.js"></script>
+    <script src="./src/main.js"></script>
     <script>
         Workstation.init('#crop-container');
         document.querySelector('input').onchange = function(event){
@@ -19,7 +19,6 @@
             Workstation.setVisibility(true)
             Workstation.insertImage(file)
         }
-        
     </script>
 </body>
 </html>
