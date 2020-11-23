@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="./src/main.min.css">
-</head>
-<body>
-    <input type="file">
-    <div id="crop-container">
-
+    <link rel="stylesheet" href="src/index.min.css" />
+  </head>
+  <body>
+    <input type="file" name="" id="">
+    <div class="container">
     </div>
     <script src="./src/main.js"></script>
     <script>
-        Workstation.init('#crop-container');
-        document.querySelector('input').onchange = function(event){
-            let file = event.target.files[0];
-            Workstation.setVisibility(true)
-            Workstation.insertImage(file)
+      const workstation = cropTool.init('.container')
+      document.querySelector('input').onchange = function(event){
+        let file = event.target.files[0]
+        workstation.open();
+        workstation.insertImage(file);
+        workstation.onclose = function(){
+          workstation.output('bs64',function(result){
+            console.log(result)
+          });
         }
+      }
     </script>
-</body>
+  </body>
 </html>
