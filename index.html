@@ -10,17 +10,15 @@
     <input type="file" name="" id="">
     <div class="container">
     </div>
-    <script src="./src/main.js"></script>
+    <script src="./src/main2.js"></script>
     <script>
-      const workstation = cropTool.init('.container')
+      const workstation = new CropStation('.container')
       document.querySelector('input').onchange = function(event){
         let file = event.target.files[0]
         workstation.open();
         workstation.insertImage(file);
-        workstation.onclose = function(){
-          workstation.output('bs64',function(result){
-            console.log(result)
-          });
+        workstation.onclose = function(result){
+          console.log(result)
         }
       }
     </script>
