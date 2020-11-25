@@ -363,13 +363,13 @@ const CropStation = (function () {
       this._plateImageBox.appendChild((this._image = metaInfo.element));
     });
   }
-  function zoomIn() {
+  function _zoomIn() {
     //修改比例尺
     this.ratio = this.ratio <= 0.1 ? 0 : this.ratio - 0.1;
     _updatePlateImageSize.call(this);
     _alignPlateImageCenter.call(this);
   }
-  function zoomOut() {
+  function _zoomOut() {
     //修改比例尺
     this.ratio += 0.1;
     _updatePlateImageSize.call(this);
@@ -481,8 +481,6 @@ const CropStation = (function () {
     //挂载实例方法
     this.open = _open.bind(this, _root);
     this.close = _close.bind(this, _root);
-    this.zoomIn = zoomIn;
-    this.zoomOut = zoomOut;
     this.insertImage = insertImage;
     //拖拽事件监听
     //初始剪切框拖拽监听
@@ -543,16 +541,21 @@ const CropStation = (function () {
         _updateCropSizeToolTip.call(this,'crop');
       }
     });
+    //window的resize事件
+    window.addEventListener('resize',()=>{
+      //居中图片
+      _alignPlateImageCenter.call(this);
+    })
     //按钮控制栏事件绑定
     this._desk.addEventListener("click", (event) => {
       let classList = event.target.classList;
       if (classList.contains("zoom-in")) {
-        this.zoomIn();
+        _zoomIn.call(this);
         //更新剪切框像素的toolTip
         _updateCropSizeToolTip.call(this,'crop');
         
       } else if (classList.contains("zoom-out")) {
-        this.zoomOut();
+        _zoomOut.call(this);
         //更新剪切框像素的toolTip
         _updateCropSizeToolTip.call(this,'crop');
       } else if (classList.contains("crop")) {
