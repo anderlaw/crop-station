@@ -4,19 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="src/index.min.css" />
+    <link rel="stylesheet" href="./dist/crop-station.min.css" />
   </head>
   <body>
     <input type="file" name="" id="">
     <div class="container">
     </div>
-    <script src="./src/main.js"></script>
+    <script src="./dist/crop-station.min.js"></script>
     <script>
-      const workstation = new CropStation('.container')
+      var workstation = new CropStation('.container')
       document.querySelector('input').onchange = function(event){
-        let file = event.target.files[0]
-        workstation.open();
+        var file = event.target.files[0]
         workstation.insertImage(file);
+        workstation.open();
         workstation.onclose = function(result){
           console.log(result)
         }

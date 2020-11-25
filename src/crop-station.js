@@ -1,10 +1,10 @@
 const CropStation = (function () {
   //此处写可以复用，跟实例无关的工具函数
-  function _close(_root) {
-    _root.style.display = "none";
+  function _close() {
+    this._root.style.display = "none";
   }
-  function _open(_root) {
-    _root.style.display = "block";
+  function _open() {
+    this._root.style.display = "block";
   }
   /**
    *切换执行、取消按钮的显示与隐藏
@@ -380,8 +380,6 @@ const CropStation = (function () {
    */
   return function (selector) {
     const _root = document.querySelector(selector);
-    //默认关闭
-    _close(_root);
     //准备DOM
     _root.innerHTML = `<div class="crop_layout">
               <div class="desktop">
@@ -478,9 +476,10 @@ const CropStation = (function () {
     this._cropBox = this._operate.querySelector(".crop-box");
     //拉伸盒子
     this._resizeBox = this._operate.querySelector(".resize-box");
+    //默认关闭
+    _close.call(this);
     //挂载实例方法
-    this.open = _open.bind(this, _root);
-    this.close = _close.bind(this, _root);
+    this.open = _open.bind(this);
     this.insertImage = insertImage;
     //拖拽事件监听
     //初始剪切框拖拽监听
@@ -574,7 +573,7 @@ const CropStation = (function () {
         // 隐藏操作按钮
         _switchExecuteCancelBtnVisible.call(this,false);
       } else if (classList.contains("close")) {
-        this.close();
+        _close.call(this);
         this.onclose && this.onclose({
           file:this._file,
           bs64:this._bs64
