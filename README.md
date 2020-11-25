@@ -7,6 +7,7 @@
 - currently only support `PC browser`,it will support `mobile browser` in the future.
 ### How to build
 ```bash
+npm install
 cd crop-station && npm run build
 ```
 then checkout the dist directory which includes `crop-station.min.css`and `crop-station.min`
