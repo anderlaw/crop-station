@@ -46,6 +46,6 @@ mycropstation.onclose = function(result){
 
 ```
 ### example
-![when we open](https://raw.githubusercontent.com/anderlaw/crop-station/beta_v2/examples/example1.jpg)
-![start cropping](https://raw.githubusercontent.com/anderlaw/crop-station/beta_v2/examples/example2.jpg)
-![after cropping](https://raw.githubusercontent.com/anderlaw/crop-station/beta_v2/examples/example3.jpg)
+![when we open](https://raw.githubusercontent.com/anderlaw/crop-station/main/examples/example1.jpg)
+![start cropping](https://raw.githubusercontent.com/anderlaw/crop-station/main/examples/example2.jpg)
+![after cropping](https://raw.githubusercontent.com/anderlaw/crop-station/main/examples/example3.jpg)
