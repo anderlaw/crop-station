@@ -46,3 +46,4 @@ mycropstation.onclose = function(result){
 
 ```
 ### example
+![](https://raw.githubusercontent.com/anderlaw/crop-station/beta_v2/examples/example1.jpg)
